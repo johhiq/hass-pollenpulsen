@@ -1,0 +1,55 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Set up Pollenpulsen",
+                "description": "Choose your region and update interval",
+                "data": {
+                    "region_id": "Region",
+                    "scan_interval": "Update interval (hours)",
+                    "name": "Name"
+                }
+            },
+            "pollen_types": {
+                "title": "Select Pollen Types",
+                "description": "Choose which pollen types to monitor",
+                "data": {
+                    "pollen_types": "Pollen types"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to the API",
+            "timeout": "Connection to API timed out",
+            "empty_regions": "No regions available from the API",
+            "empty_pollen_types": "No pollen types available from the API",
+            "unknown": "Unexpected error"
+        },
+        "abort": {
+            "already_configured": "This region is already configured"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Pollenpulsen Options",
+                "description": "Update your configuration",
+                "data": {
+                    "scan_interval": "Update interval (hours)",
+                    "pollen_types": "Pollen types"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to the API",
+            "timeout": "Connection to API timed out",
+            "empty_pollen_types": "No pollen types available from the API",
+            "unknown": "Unexpected error"
+        }
+    },
+    "sensor": {
+        "no_data_available": "No data available",
+        "no_forecast_available": "No forecast available",
+        "attribution": "Data provided by the Palynological Laboratory at the Swedish Museum of Natural History"
+    }
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Outer circle -->
+  <circle cx="128" cy="128" r="45 " fill="none" stroke="#F5E8D3" stroke-width="8"/>
+  
+  <!-- Center circle -->
+  <circle cx="128" cy="128" r="15" fill="#FF8F00"/>
+  
+  <!-- Pollen particles - top, bottom, left, right -->
+  <circle cx="128" cy="58" r="10" fill="#A23200"/> <!-- klockan 12 -->
+  <circle cx="128" cy="198" r="10" fill="#FFA722"/> <!-- klockan 6 -->
+  <circle cx="58" cy="128" r="10" fill="#E76800"/> <!-- klockan 9 -->
+  <circle cx="198" cy="128" r="10" fill="#FFE08A"/> <!-- klockan 3 -->
+  
+  <!-- Diagonal particles -->
+  <circle cx="178" cy="78" r="10" fill="#FFF5CC"/> <!-- klockan 1-2 -->
+  <circle cx="78" cy="178" r="10" fill="#FF8400"/> <!-- klockan 7-8 -->
+  <circle cx="78" cy="78" r="10" fill="#C54D00"/> <!-- klockan 10-11 -->
+  <circle cx="178" cy="178" r="10" fill="#FFCB47"/> <!-- klockan 4-5 -->
+</svg>

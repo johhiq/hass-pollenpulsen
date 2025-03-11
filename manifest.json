@@ -1,0 +1,12 @@
+{
+    "domain": "pollenpulsen",
+    "name": "Pollenpulsen",
+    "version": "1.0.0",
+    "documentation": "https://github.com/johhiq/pollenpulsen",
+    "dependencies": [],
+    "codeowners": ["@johhiq"],
+    "requirements": [],
+    "iot_class": "cloud_polling",
+    "config_flow": true,
+    "icon": "pollenpulsen"
+}
