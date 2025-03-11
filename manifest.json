@@ -2,7 +2,7 @@
     "domain": "pollenpulsen",
     "name": "Pollenpulsen",
     "version": "1.0.0",
-    "documentation": "https://github.com/johhiq/pollenpulsen",
+    "documentation": "https://github.com/johhiq/hass-pollenpulsen",
     "dependencies": [],
     "codeowners": ["@johhiq"],
     "requirements": [],

@@ -41,8 +41,8 @@ The integration creates two types of entities:
 
 ### Pollen Level Sensors
 - Individual sensors for each selected pollen type
-- Shows current pollen levels (0-4)
-- Includes description of the level (Inga halter, Låga, Måttliga, Höga)
+- Shows current pollen levels (0-8)
+- Includes description of the level (Inga halter, Låga, Måttliga, Höga, Mycket höga, Extremt höga, Data saknas, Pollensäsongen ej börjat, Pollensäsongen är slut)
 
 ## Attributes
 
