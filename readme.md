@@ -35,9 +35,9 @@ The integration can be configured entirely through the UI. You can:
 The integration creates two types of entities:
 
 ### Forecast Sensor
-- Shows the current pollen forecast text
-- Includes attributes for forecast period, region, and pollen levels
-- For national forecasts (Sverige), includes distribution map URLs
+- Shows the current state of the forecast ("active", "no_data", or "unavailable")
+- Includes structured attributes with forecast text, period, region, and detailed pollen levels
+- Provides a comprehensive overview of all pollen types in the region
 
 ### Pollen Level Sensors
 - Individual sensors for each selected pollen type
@@ -47,18 +47,29 @@ The integration creates two types of entities:
 ## Attributes
 
 ### Forecast Sensor Attributes
-- `forecast_text`: Complete forecast text
-- `end_date`: End date of the current forecast
-- `region`: Region name
-- `map_url_[pollen_name]`: URLs to pollen distribution maps (national forecast only)
-- `Pollen [type]`: Current level for each pollen type
-- `Pollen [type] description`: Description of the level
+- `last_updated`: Timestamp of the last data update
+- `forecast`: Object containing:
+  - `text`: Complete forecast text
+  - `start_date`: Start date of the current forecast
+  - `end_date`: End date of the current forecast
+  - `region`: Region name
+- `pollen_levels`: Array of pollen information objects, each containing:
+  - `type`: Pollen type name
+  - `type_id`: Pollen type ID
+  - `level`: Current level (0-8)
+  - `description`: Text description of the level
+- `metadata`: Object containing:
+  - `attribution`: Data source attribution
+  - `last_update_success`: Whether the last update was successful
 
 ### Pollen Level Sensor Attributes
-- `start_date`: Start date of the measurement
-- `end_date`: End date of the measurement
+- `type`: Pollen type name
+- `type_id`: Pollen type ID
 - `region`: Region name
-- `level_description`: Text description of the current level
+- `forecast_period`: Object containing:
+  - `start`: Start date of the forecast
+  - `end`: End date of the forecast
+- `description`: Text description of the current level
 
 ## Data Source
 
