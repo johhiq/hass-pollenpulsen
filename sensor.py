@@ -167,7 +167,7 @@ class PollenDataCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Error fetching data: {err}") from err
 
 class PollenSensor(CoordinatorEntity, SensorEntity):
-    """Sensor entity for pollen levels."""
+    """Individual sensor for each pollen type."""
 
     def __init__(
         self,
@@ -177,7 +177,7 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         pollen_name: str,
         region_name: str
     ) -> None:
-        """Initialize the sensor."""
+        """Initialize the pollen sensor."""
         super().__init__(coordinator)
         self._pollen_id = pollen_id
         self._region_id = region_id
@@ -192,44 +192,43 @@ class PollenSensor(CoordinatorEntity, SensorEntity):
         self._attr_state_class = SensorStateClass.MEASUREMENT
         
     @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return (
-            self.coordinator.last_update_success or 
-            bool(self.coordinator._last_successful_data)
-        )
-        
-    @property
     def native_value(self) -> Optional[int]:
-        """Return the state of the sensor."""
+        """Return the current pollen level.
+        
+        Returns:
+            int: Pollen level (0-8) or None if no data available
+        """
         if not self.coordinator.data or "pollen_levels" not in self.coordinator.data:
             return None
         return self.coordinator.data["pollen_levels"].get(self._pollen_id)
     
     @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
+    def extra_state_attributes(self) -> Dict[str, Any]:
+        """Return the state attributes for individual pollen sensors."""
         if not self.coordinator.data:
             return {}
             
+        level = self.coordinator.data.get("pollen_levels", {}).get(self._pollen_id)
+        
         attributes = {
-            "start_date": self.coordinator.data.get("start_date"),
-            "end_date": self.coordinator.data.get("end_date"),
+            "type": self._pollen_name,
+            "type_id": self._pollen_id,
             "region": self._region_name,
-            "last_update_success": self.coordinator.last_update_success
+            "forecast_period": {
+                "start": self.coordinator.data.get("start_date"),
+                "end": self.coordinator.data.get("end_date")
+            }
         }
 
-        # Add current pollen level description
-        level = self.coordinator.data.get("pollen_levels", {}).get(self._pollen_id)
         if level is not None and "level_definitions" in self.coordinator.data:
-            attributes["level_description"] = self.coordinator.data["level_definitions"].get(
+            attributes["description"] = self.coordinator.data["level_definitions"].get(
                 level, f"Okänd nivå: {level}"
             )
         
         return attributes
 
 class PollenForecastSensor(CoordinatorEntity, SensorEntity):
-    """Sensor entity for pollen forecast text."""
+    """Main sensor entity for pollen forecast."""
 
     def __init__(
         self,
@@ -237,76 +236,64 @@ class PollenForecastSensor(CoordinatorEntity, SensorEntity):
         region_id: str,
         region_name: str
     ) -> None:
-        """Initialize the sensor."""
+        """Initialize the forecast sensor."""
         super().__init__(coordinator)
         self._region_id = region_id
         self._region_name = region_name
         
         self._attr_name = f"Pollenprognos {region_name}"
         self._attr_unique_id = f"pollenprognos_{region_name.lower()}"
-        self._attr_attribution = ATTRIBUTION
-        self._attr_icon = "mdi:text-box"
-        self._attr_device_class = SensorDeviceClass.TIMESTAMP
+        self._attr_icon = "mdi:flower-pollen"
         
     @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return (
-            self.coordinator.last_update_success or 
-            bool(self.coordinator._last_successful_data)
-        )
+    def native_value(self) -> str:
+        """Return the state of the sensor.
         
-    @property
-    def native_value(self) -> Optional[datetime]:
-        """Return the state of the sensor."""
+        Returns:
+            str: Current state of the forecast ('active', 'no_data', or 'unavailable')
+        """
         if not self.coordinator.data:
-            return None
-            
-        date_str = self.coordinator.data.get("start_date")
-        if not date_str:
-            return None
-            
-        try:
-            # Konvertera datumsträngen till datetime med tidszon
-            date = datetime.strptime(date_str, "%Y-%m-%d")
-            return date.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Stockholm"))
-        except (ValueError, TypeError):
-            _LOGGER.error("Failed to parse date: %s", date_str)
-            return None
+            return "unavailable"
+        
+        if self.coordinator.data.get("pollen_levels"):
+            return "active"
+        return "no_data"
     
     @property
     def extra_state_attributes(self) -> Dict[str, Any]:
-        """Return the state attributes."""
+        """Return the state attributes with the structured data format."""
         if not self.coordinator.data:
             return {}
             
         attributes = {
-            "forecast_text": self.coordinator.data.get("text", "Ingen prognos tillgänglig"),
-            "end_date": self.coordinator.data.get("end_date"),
-            "region": self._region_name,
-            "last_update_success": self.coordinator.last_update_success
+            "last_updated": datetime.now(zoneinfo.ZoneInfo("Europe/Stockholm")).isoformat(),
+            "forecast": {
+                "text": self.coordinator.data.get("text", "Ingen prognos tillgänglig"),
+                "start_date": self.coordinator.data.get("start_date"),
+                "end_date": self.coordinator.data.get("end_date"),
+                "region": self._region_name
+            },
+            "pollen_levels": [],
+            "metadata": {
+                "attribution": ATTRIBUTION,
+                "last_update_success": self.coordinator.last_update_success
+            }
         }
         
-        # Add image URLs for all regions if available
-        if images := self.coordinator.data.get("images", []):
-            pollen_types = self.coordinator.data.get("pollen_types", {})
-            for image in images:
-                if pollen_id := image.get("pollenId"):
-                    pollen_name = pollen_types.get(pollen_id, pollen_id)
-                    if url := image.get("url"):
-                        attributes[f"map_url_{pollen_name}"] = url
-        
-        # Add pollen levels with names and descriptions if available
         if pollen_levels := self.coordinator.data.get("pollen_levels", {}):
             pollen_types = self.coordinator.data.get("pollen_types", {})
             level_definitions = self.coordinator.data.get("level_definitions", {})
             
             for pollen_id, level in pollen_levels.items():
-                pollen_name = pollen_types.get(pollen_id, pollen_id)
-                attributes[f"Pollen {pollen_name}"] = level
-                if level is not None:
-                    attributes[f"Pollen {pollen_name} description"] = level_definitions.get(
-                        level, f"Okänd nivå: {level}"
-                    )
+                pollen_info = {
+                    "type": pollen_types.get(pollen_id, pollen_id),
+                    "type_id": pollen_id,
+                    "level": level,
+                    "description": level_definitions.get(level, f"Okänd nivå: {level}")
+                }
+                attributes["pollen_levels"].append(pollen_info)
+        
+        # Sort pollen levels alphabetically by type
+        attributes["pollen_levels"].sort(key=lambda x: x["type"])
         
         return attributes
