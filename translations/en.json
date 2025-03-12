@@ -3,18 +3,10 @@
         "step": {
             "user": {
                 "title": "Set up Pollenpulsen",
-                "description": "Choose your region and update interval",
+                "description": "Choose your region",
                 "data": {
                     "region_id": "Region",
-                    "scan_interval": "Update interval (hours)",
                     "name": "Name"
-                }
-            },
-            "pollen_types": {
-                "title": "Select Pollen Types",
-                "description": "Choose which pollen types to monitor",
-                "data": {
-                    "pollen_types": "Pollen types"
                 }
             }
         },
@@ -22,7 +14,6 @@
             "cannot_connect": "Failed to connect to the API",
             "timeout": "Connection to API timed out",
             "empty_regions": "No regions available from the API",
-            "empty_pollen_types": "No pollen types available from the API",
             "unknown": "Unexpected error"
         },
         "abort": {
@@ -33,17 +24,15 @@
         "step": {
             "init": {
                 "title": "Pollenpulsen Options",
-                "description": "Update your configuration",
+                "description": "Update interval for all regions",
                 "data": {
-                    "scan_interval": "Update interval (hours)",
-                    "pollen_types": "Pollen types"
+                    "scan_interval": "Update interval (hours)"
                 }
             }
         },
         "error": {
             "cannot_connect": "Failed to connect to the API",
             "timeout": "Connection to API timed out",
-            "empty_pollen_types": "No pollen types available from the API",
             "unknown": "Unexpected error"
         }
     },

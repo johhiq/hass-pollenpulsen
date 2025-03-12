@@ -8,5 +8,6 @@
     "requirements": [],
     "iot_class": "cloud_polling",
     "config_flow": true,
-    "icon": "pollenpulsen"
+    "integration_type": "service",
+    "icon": "mdi:flower-pollen-outline"
 }

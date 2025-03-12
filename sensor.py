@@ -4,13 +4,12 @@ This module provides sensor entities for pollen levels and forecasts.
 """
 from datetime import timedelta, datetime
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 import async_timeout
 import zoneinfo
 
 from homeassistant.components.sensor import (
     SensorEntity,
-    SensorDeviceClass,
     SensorStateClass,
 )
 from homeassistant.const import CONF_SCAN_INTERVAL
@@ -28,7 +27,6 @@ from .const import (
     DOMAIN,
     ATTRIBUTION,
     CONF_REGION_ID,
-    CONF_POLLEN_TYPES,
     DEFAULT_SCAN_INTERVAL,
     API_URL_LEVEL_DEFINITIONS,
 )
@@ -36,16 +34,11 @@ from .api import PollenPulsenApiClient, PollenPulsenApiClientError
 
 _LOGGER = logging.getLogger(__name__)
 
-# Translation keys
-KEY_NO_DATA = "no_data_available"
-KEY_NO_FORECAST = "no_forecast_available"
-
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up Pollenpulsen sensor from a config entry."""
     region_id = entry.data[CONF_REGION_ID]
-    pollen_types = entry.data.get(CONF_POLLEN_TYPES, [])
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     
     api_client = PollenPulsenApiClient(hass)
@@ -58,12 +51,6 @@ async def async_setup_entry(
         _LOGGER.error("Error fetching region names: %s", err)
         region_name = region_id
     
-    try:
-        pollen_types_data = await api_client.get_pollen_types()
-    except Exception as err:  # pylint: disable=broad-except
-        _LOGGER.error("Error fetching pollen type names: %s", err)
-        pollen_types_data = {}
-    
     coordinator = PollenDataCoordinator(
         hass,
         api_client=api_client,
@@ -75,17 +62,7 @@ async def async_setup_entry(
     except Exception as err:  # pylint: disable=broad-except
         _LOGGER.error("Error during initial data refresh: %s", err)
     
-    entities = []
-    
-    # Create a forecast sensor
-    entities.append(PollenForecastSensor(coordinator, region_id, region_name))
-    
-    # Create sensors for each selected pollen type
-    for pollen_id in pollen_types:
-        pollen_name = pollen_types_data.get(pollen_id, pollen_id)
-        entities.append(PollenSensor(coordinator, pollen_id, region_id, pollen_name, region_name))
-    
-    async_add_entities(entities)
+    async_add_entities([PollenForecastSensor(coordinator, region_id, region_name)])
 
 class PollenDataCoordinator(DataUpdateCoordinator):
     """Coordinator to fetch pollen data from the API."""
@@ -166,67 +143,6 @@ class PollenDataCoordinator(DataUpdateCoordinator):
                 return self._last_successful_data
             raise UpdateFailed(f"Error fetching data: {err}") from err
 
-class PollenSensor(CoordinatorEntity, SensorEntity):
-    """Individual sensor for each pollen type."""
-
-    def __init__(
-        self,
-        coordinator: PollenDataCoordinator,
-        pollen_id: str,
-        region_id: str,
-        pollen_name: str,
-        region_name: str
-    ) -> None:
-        """Initialize the pollen sensor."""
-        super().__init__(coordinator)
-        self._pollen_id = pollen_id
-        self._region_id = region_id
-        self._pollen_name = pollen_name
-        self._region_name = region_name
-        
-        self._attr_name = f"{pollen_name}pollen {region_name}"
-        self._attr_unique_id = f"pollen_{region_id}_{pollen_id}"
-        self._attr_attribution = ATTRIBUTION
-        self._attr_icon = "mdi:flower-pollen"
-        self._attr_native_unit_of_measurement = "level"
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        
-    @property
-    def native_value(self) -> Optional[int]:
-        """Return the current pollen level.
-        
-        Returns:
-            int: Pollen level (0-8) or None if no data available
-        """
-        if not self.coordinator.data or "pollen_levels" not in self.coordinator.data:
-            return None
-        return self.coordinator.data["pollen_levels"].get(self._pollen_id)
-    
-    @property
-    def extra_state_attributes(self) -> Dict[str, Any]:
-        """Return the state attributes for individual pollen sensors."""
-        if not self.coordinator.data:
-            return {}
-            
-        level = self.coordinator.data.get("pollen_levels", {}).get(self._pollen_id)
-        
-        attributes = {
-            "type": self._pollen_name,
-            "type_id": self._pollen_id,
-            "region": self._region_name,
-            "forecast_period": {
-                "start": self.coordinator.data.get("start_date"),
-                "end": self.coordinator.data.get("end_date")
-            }
-        }
-
-        if level is not None and "level_definitions" in self.coordinator.data:
-            attributes["description"] = self.coordinator.data["level_definitions"].get(
-                level, f"Okänd nivå: {level}"
-            )
-        
-        return attributes
-
 class PollenForecastSensor(CoordinatorEntity, SensorEntity):
     """Main sensor entity for pollen forecast."""
 
@@ -247,11 +163,7 @@ class PollenForecastSensor(CoordinatorEntity, SensorEntity):
         
     @property
     def native_value(self) -> str:
-        """Return the state of the sensor.
-        
-        Returns:
-            str: Current state of the forecast ('active', 'no_data', or 'unavailable')
-        """
+        """Return the state of the sensor."""
         if not self.coordinator.data:
             return "unavailable"
         

@@ -12,7 +12,6 @@ API_URL_LEVEL_DEFINITIONS = f"{API_BASE_URL}/pollen-level-definitions"
 
 # Configuration constants
 CONF_REGION_ID = "region_id"
-CONF_POLLEN_TYPES = "pollen_types"
 CONF_NAME = "name"
 DEFAULT_SCAN_INTERVAL = 3  # hours
 

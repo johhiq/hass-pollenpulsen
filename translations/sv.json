@@ -3,18 +3,10 @@
         "step": {
             "user": {
                 "title": "Konfigurera Pollenpulsen",
-                "description": "Välj din region och uppdateringsintervall",
+                "description": "Välj din region",
                 "data": {
                     "region_id": "Region",
-                    "scan_interval": "Uppdateringsintervall (timmar)",
                     "name": "Namn"
-                }
-            },
-            "pollen_types": {
-                "title": "Välj pollentyper",
-                "description": "Välj vilka pollentyper du vill övervaka",
-                "data": {
-                    "pollen_types": "Pollentyper"
                 }
             }
         },
@@ -22,7 +14,6 @@
             "cannot_connect": "Kunde inte ansluta till API:et",
             "timeout": "Tidsgräns överskreds vid anslutning till API:et",
             "empty_regions": "Inga regioner tillgängliga från API:et",
-            "empty_pollen_types": "Inga pollentyper tillgängliga från API:et",
             "unknown": "Oväntat fel"
         },
         "abort": {
@@ -33,17 +24,15 @@
         "step": {
             "init": {
                 "title": "Pollenpulsen inställningar",
-                "description": "Uppdatera din konfiguration",
+                "description": "Uppdateringsintervall för alla regioner",
                 "data": {
-                    "scan_interval": "Uppdateringsintervall (timmar)",
-                    "pollen_types": "Pollentyper"
+                    "scan_interval": "Uppdateringsintervall (timmar)"
                 }
             }
         },
         "error": {
             "cannot_connect": "Kunde inte ansluta till API:et",
             "timeout": "Tidsgräns överskreds vid anslutning till API:et",
-            "empty_pollen_types": "Inga pollentyper tillgängliga från API:et",
             "unknown": "Oväntat fel"
         }
     },

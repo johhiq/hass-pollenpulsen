@@ -5,10 +5,8 @@ This custom integration provides pollen forecasts for Swedish regions using data
 ## Features
 
 - Real-time pollen forecasts for all Swedish regions
-- Detailed national forecast with pollen distribution maps
-- Individual sensors for each pollen type
-- Configurable update intervals
-- Supports both regional and national forecasts
+- Comprehensive forecast data including all pollen types
+- Configurable update interval
 - Available in Swedish and English
 
 ## Installation
@@ -24,29 +22,23 @@ This custom integration provides pollen forecasts for Swedish regions using data
 
 ## Configuration
 
-The integration can be configured entirely through the UI. You can:
+The integration can be configured through the UI:
 
 1. Select your region (e.g., Stockholm, Borlänge, Sverige)
-2. Choose which pollen types to monitor
-3. Set the update interval (1-24 hours, default: 3 hours)
+2. Set the update interval (1-24 hours, default: 3 hours) - applies to all configured regions
 
 ## Entities
 
-The integration creates two types of entities:
+The integration creates one sensor entity per configured region:
 
-### Forecast Sensor
+### Forecast Sensor (`sensor.pollenprognos_<region>`)
 - Shows the current state of the forecast ("active", "no_data", or "unavailable")
-- Includes structured attributes with forecast text, period, region, and detailed pollen levels
-- Provides a comprehensive overview of all pollen types in the region
+- Includes comprehensive attributes with forecast data and pollen levels
 
-### Pollen Level Sensors
-- Individual sensors for each selected pollen type
-- Shows current pollen levels (0-8)
-- Includes description of the level (Inga halter, Låga, Måttliga, Höga, Mycket höga, Extremt höga, Data saknas, Pollensäsongen ej börjat, Pollensäsongen är slut)
+### Attributes
 
-## Attributes
+The forecast sensor provides the following attributes:
 
-### Forecast Sensor Attributes
 - `last_updated`: Timestamp of the last data update
 - `forecast`: Object containing:
   - `text`: Complete forecast text
@@ -54,7 +46,7 @@ The integration creates two types of entities:
   - `end_date`: End date of the current forecast
   - `region`: Region name
 - `pollen_levels`: Array of pollen information objects, each containing:
-  - `type`: Pollen type name
+  - `type`: Pollen type name (e.g., "Al", "Björk", "Gräs")
   - `type_id`: Pollen type ID
   - `level`: Current level (0-8)
   - `description`: Text description of the level
@@ -62,14 +54,30 @@ The integration creates two types of entities:
   - `attribution`: Data source attribution
   - `last_update_success`: Whether the last update was successful
 
-### Pollen Level Sensor Attributes
-- `type`: Pollen type name
-- `type_id`: Pollen type ID
-- `region`: Region name
-- `forecast_period`: Object containing:
-  - `start`: Start date of the forecast
-  - `end`: End date of the forecast
-- `description`: Text description of the current level
+## Example Values
+
+### Pollen Levels
+- 0: Inga halter
+- 1: Låga halter
+- 2: Låga till måttliga halter
+- 3: Måttliga halter
+- 4: Måttliga till höga halter
+- 5: Höga halter
+- 6: Data saknas
+- 7: Pollensäsongen ej börjat
+- 8: Pollensäsongen är slut
+
+## Template Examples
+
+To get the pollen level for a specific type (e.g., Björk in Stockholm):
+```yaml
+{{ state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first | attr('level') }}
+```
+
+To get the description for a specific pollen type:
+```yaml
+{{ state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first | attr('description') }}
+```
 
 ## Data Source
 
