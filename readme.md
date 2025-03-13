@@ -86,6 +86,8 @@ An example card configuration is provided in the `example_card` directory. This 
 - Individual cards for each pollen type
 - Color-coded indicators based on pollen levels
 
+![Example Card](images/example_card.png)
+
 To use the example card:
 1. Install [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) via HACS
 2. Check the `example_card/readme.md` for installation instructions
