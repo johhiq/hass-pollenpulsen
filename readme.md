@@ -79,6 +79,17 @@ To get the description for a specific pollen type:
 {{ state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first | attr('description') }}
 ```
 
+## Example Dashboard Card
+
+An example card configuration is provided in the `example_card` directory. This card uses Mushroom Cards to display:
+- Current pollen forecast
+- Individual cards for each pollen type
+- Color-coded indicators based on pollen levels
+
+To use the example card:
+1. Install [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom) via HACS
+2. Check the `example_card/readme.md` for installation instructions
+
 ## Data Source
 
 Data is provided by the Palynological Laboratory at the Swedish Museum of Natural History through their official API.

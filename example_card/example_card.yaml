@@ -1,0 +1,121 @@
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      ## Pollenprognos Stockholm
+
+      {{ state_attr('sensor.pollenprognos_stockholm', 'forecast').text }}
+
+      Period: {{ state_attr('sensor.pollenprognos_stockholm', 'forecast').start_date }} - {{ state_attr('sensor.pollenprognos_stockholm', 'forecast').end_date }}
+  - type: grid
+    columns: 4
+    square: false
+    cards:
+      - type: custom:mushroom-template-card
+        primary: Al
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Al') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Al') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Al') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: Alm
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Alm') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Alm') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Alm') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: Björk
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Björk') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: Ek
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Ek') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Ek') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Ek') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+  - type: grid
+    columns: 4
+    square: false
+    cards:
+      - type: custom:mushroom-template-card
+        primary: Gräs
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gräs') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gräs') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gräs') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: Gråbo
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gråbo') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gråbo') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Gråbo') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: Hassel
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Hassel') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Hassel') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Hassel') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
+      - type: custom:mushroom-template-card
+        primary: "Sälg och viden"
+        secondary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Sälg och viden') | list | first %}
+          Nivå: {{ pollen.level }}
+        tertiary: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Sälg och viden') | list | first %}
+          {{ pollen.description }}
+        icon: mdi:flower-pollen
+        icon_color: >-
+          {% set pollen = state_attr('sensor.pollenprognos_stockholm', 'pollen_levels') | selectattr('type', 'eq', 'Sälg och viden') | list | first %}
+          {% set level = pollen.level | int %}
+          {% if level == 0 %}green{% elif level <= 2 %}yellow{% elif level <= 4 %}orange{% elif level == 5 %}red{% else %}grey{% endif %}
