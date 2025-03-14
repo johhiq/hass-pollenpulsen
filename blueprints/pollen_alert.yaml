@@ -2,7 +2,7 @@ blueprint:
   name: Pollenpulsen Alert
   description: Skickar en notifiering när specifika pollentyper överstiger en viss nivå
   domain: automation
-  source_url: https://github.com/yourusername/pollenpulsen/blob/main/blueprints/pollen_alert.yaml
+  source_url: https://github.com/johhiq/hass-pollenpulsen/blob/main/blueprints/pollen_alert.yaml
   input:
     region_sensor:
       name: Pollensensor
@@ -34,17 +34,17 @@ blueprint:
         select:
           options:
             - label: "0 - Inga halter"
-              value: 0
+              value: "0"
             - label: "1 - Låga halter"
-              value: 1
+              value: "1"
             - label: "2 - Låga till måttliga halter"
-              value: 2
+              value: "2"
             - label: "3 - Måttliga halter"
-              value: 3
+              value: "3"
             - label: "4 - Måttliga till höga halter"
-              value: 4
+              value: "4"
             - label: "5 - Höga halter"
-              value: 5
+              value: "5"
     notification_time:
       name: Tid för notifiering
       description: Vilken tid på dagen vill du få notifieringen?
@@ -55,8 +55,8 @@ blueprint:
       name: Notifieringstjänst
       description: Vilken notifieringstjänst vill du använda? (t.ex. notify.mobile_app_din_telefon)
       selector:
-        service:
-          domain: notify
+        text:
+          multiline: false
     include_forecast:
       name: Inkludera prognos
       description: Inkludera hela pollenprognosen i notifieringen?
@@ -78,7 +78,7 @@ condition:
           {% set pollen = pollen_levels | selectattr('type', 'eq', pollen_type) | list %}
           {% if pollen and pollen|length > 0 %}
             {% set level = pollen[0].level | int %}
-            {% if level >= input.threshold_level and level <= 5 %}
+            {% if level >= input.threshold_level | int and level <= 5 %}
               {% set high_pollen_types = high_pollen_types + [pollen_type] %}
             {% endif %}
           {% endif %}
@@ -97,13 +97,13 @@ action:
           {% set pollen = pollen_levels | selectattr('type', 'eq', pollen_type) | list %}
           {% if pollen and pollen|length > 0 %}
             {% set level = pollen[0].level | int %}
-            {% if level >= input.threshold_level and level <= 5 %}
+            {% if level >= input.threshold_level | int and level <= 5 %}
               {% set types = types + [{'type': pollen_type, 'level': pollen[0].level, 'description': pollen[0].description}] %}
             {% endif %}
           {% endif %}
         {% endfor %}
         {{ types }}
-  - service: !input notify_service
+  - service: "{{ input.notify_service }}"
     data:
       title: "Pollenvarning: {{ high_pollen_types|length }} typer över tröskelnivå"
       message: >
