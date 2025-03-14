@@ -7,7 +7,7 @@ För att få notifieringar när pollennivåer överstiger en viss nivå, kan du 
 - Home Assistant med Pollenpulsen-integrationen installerad och konfigurerad
 - Minst en region konfigurerad i Pollenpulsen-integrationen
 
-Om du inte redan har installerat Pollenpulsen-integrationen, följ instruktionerna i [huvuddokumentationen](https://github.com/johhiq/pollenpulsen).
+Om du inte redan har installerat Pollenpulsen-integrationen, följ instruktionerna i [huvuddokumentationen](https://github.com/johhiq/hass-pollenpulsen/).
 
 ### Installation
 
