@@ -15,7 +15,7 @@ Om du inte redan har installerat Pollenpulsen-integrationen, följ instruktioner
 2. Klicka på "Importera Blueprint"
 3. Klistra in följande URL:
    ```
-   https://github.com/johhiq/pollenpulsen/blob/main/blueprints/pollen_alert.yaml
+   https://github.com/johhiq/hass-pollenpulsen/blob/main/blueprints/pollen_alert.yaml
    ```
 4. Klicka på "Förhandsgranska" och sedan "Importera"
 
