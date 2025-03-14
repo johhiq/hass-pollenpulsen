@@ -1,0 +1,120 @@
+blueprint:
+  name: Pollenpulsen Alert
+  description: Skickar en notifiering när specifika pollentyper överstiger en viss nivå
+  domain: automation
+  source_url: https://github.com/yourusername/pollenpulsen/blob/main/blueprints/pollen_alert.yaml
+  input:
+    region_sensor:
+      name: Pollensensor
+      description: Välj pollensensorn för din region (t.ex. sensor.pollenprognos_stockholm)
+      selector:
+        entity:
+          domain: sensor
+          integration: pollenpulsen
+    pollen_types:
+      name: Pollentyper
+      description: Vilka pollentyper vill du få varningar för? (välj en eller flera)
+      selector:
+        select:
+          options:
+            - Al
+            - Alm
+            - Björk
+            - Ek
+            - Gräs
+            - Gråbo
+            - Hassel
+            - "Sälg och viden"
+          multiple: true
+    threshold_level:
+      name: Tröskelnivå
+      description: Skicka notifiering när pollennivån är lika med eller över detta värde
+      default: 3
+      selector:
+        select:
+          options:
+            - label: "0 - Inga halter"
+              value: 0
+            - label: "1 - Låga halter"
+              value: 1
+            - label: "2 - Låga till måttliga halter"
+              value: 2
+            - label: "3 - Måttliga halter"
+              value: 3
+            - label: "4 - Måttliga till höga halter"
+              value: 4
+            - label: "5 - Höga halter"
+              value: 5
+    notification_time:
+      name: Tid för notifiering
+      description: Vilken tid på dagen vill du få notifieringen?
+      default: "08:00:00"
+      selector:
+        time: {}
+    notify_service:
+      name: Notifieringstjänst
+      description: Vilken notifieringstjänst vill du använda? (t.ex. notify.mobile_app_din_telefon)
+      selector:
+        service:
+          domain: notify
+    include_forecast:
+      name: Inkludera prognos
+      description: Inkludera hela pollenprognosen i notifieringen?
+      default: false
+      selector:
+        boolean: {}
+
+trigger:
+  - platform: time
+    at: !input notification_time
+
+condition:
+  - condition: template
+    value_template: >
+      {% set pollen_levels = state_attr(states[input.region_sensor].entity_id, 'pollen_levels') %}
+      {% if pollen_levels %}
+        {% set high_pollen_types = [] %}
+        {% for pollen_type in input.pollen_types %}
+          {% set pollen = pollen_levels | selectattr('type', 'eq', pollen_type) | list %}
+          {% if pollen and pollen|length > 0 %}
+            {% set level = pollen[0].level | int %}
+            {% if level >= input.threshold_level and level <= 5 %}
+              {% set high_pollen_types = high_pollen_types + [pollen_type] %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {{ high_pollen_types|length > 0 }}
+      {% else %}
+        false
+      {% endif %}
+
+action:
+  - variables:
+      pollen_levels: "{{ state_attr(states[input.region_sensor].entity_id, 'pollen_levels') }}"
+      high_pollen_types: >
+        {% set types = [] %}
+        {% for pollen_type in input.pollen_types %}
+          {% set pollen = pollen_levels | selectattr('type', 'eq', pollen_type) | list %}
+          {% if pollen and pollen|length > 0 %}
+            {% set level = pollen[0].level | int %}
+            {% if level >= input.threshold_level and level <= 5 %}
+              {% set types = types + [{'type': pollen_type, 'level': pollen[0].level, 'description': pollen[0].description}] %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {{ types }}
+  - service: !input notify_service
+    data:
+      title: "Pollenvarning: {{ high_pollen_types|length }} typer över tröskelnivå"
+      message: >
+        {% for pollen in high_pollen_types %}
+        {{ pollen.type }}: nivå {{ pollen.level }} ({{ pollen.description }})
+        {% endfor %}
+        {% if input.include_forecast %}
+        
+        Prognos: {{ state_attr(states[input.region_sensor].entity_id, 'forecast').text }}
+        {% endif %}
+      data:
+        push:
+          category: pollen
+        tag: pollen_alert
