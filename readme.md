@@ -58,14 +58,13 @@ The forecast sensor provides the following attributes:
 
 ### Pollen Levels
 - 0: Inga halter
-- 1: Låga halter
-- 2: Låga till måttliga halter
-- 3: Måttliga halter
-- 4: Måttliga till höga halter
-- 5: Höga halter
-- 6: Data saknas
-- 7: Pollensäsongen ej börjat
-- 8: Pollensäsongen är slut
+- 1: Låga
+- 2: Låga till måttliga
+- 3: Måttliga
+- 4: Måttliga till höga
+- 5: Höga
+- 6: Höga till mycket höga
+- 7: Mycket höga
 
 ## Template Examples
 
